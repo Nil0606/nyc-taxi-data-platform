@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.env
+.env.*
+
+# Data (keep sample/ tracked via .gitkeep)
+data/**
+!data/sample/
+!data/sample/.gitkeep
+*.parquet
+*.csv
+*.json
+*.orc
+*.avro
+!sql/**/*.sql
+
+# Spark / Java
+spark-warehouse/
+metastore_db/
+derby.log
+*.jar
+
+# Terraform
+infrastructure/terraform/.terraform/
+infrastructure/terraform/*.tfstate
+infrastructure/terraform/*.tfstate.*
+infrastructure/terraform/*.tfvars
+infrastructure/terraform/*.tfvars.json
+.terraform.lock.hcl
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
+
+# Docker
+*.log
