@@ -6,7 +6,7 @@ Batch and streaming data platform for NYC Taxi & Limousine Commission (TLC) trip
 
 ```
 ├── data/sample/          # Small fixtures for local runs (not production data)
-├── ingestion/            # Source extract & load into object storage / landing zone
+├── ingestion/            # Source extract & load into GCS landing zone
 ├── spark/                # Spark jobs (bronze → silver → gold)
 ├── data_quality/         # Checks, expectations, and quarantine logic
 ├── sql/                  # Warehouse models, views, and analytics queries
@@ -35,7 +35,7 @@ Place a small sample file under `data/sample/` for development. Do not commit la
 
 ## Next steps
 
-1. Implement ingestion into a landing/bronze bucket.
+1. Implement ingestion into a GCS landing/bronze bucket.
 2. Add Spark transforms and data-quality gates.
 3. Model gold tables in `sql/`.
-4. Provision cloud resources from `infrastructure/terraform/`.
+4. Provision GCP resources from `infrastructure/terraform/`.
