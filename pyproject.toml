@@ -9,8 +9,19 @@ description = "NYC TLC taxi batch and streaming data platform"
 requires-python = ">=3.10"
 
 [tool.setuptools.packages.find]
-include = ["data_quality*"]
+include = ["data_quality*", "spark*"]
 
 [tool.pytest.ini_options]
 pythonpath = ["."]
 testpaths = ["tests"]
+
+[tool.pylint.typecheck]
+# PySpark's builder is a JVM proxy; Pylint cannot see appName/master/config.
+ignored-classes = ["SparkSession", "Builder"]
+generated-members = [
+    "builder",
+    "appName",
+    "master",
+    "config",
+    "getOrCreate",
+]
