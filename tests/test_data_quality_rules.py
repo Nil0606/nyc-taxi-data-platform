@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import pandas as pd
+import pytest
 
 from data_quality.clean import apply_rules
 from data_quality.profile import evaluate_column, evaluate_cross_field
@@ -74,3 +75,7 @@ def test_cross_field_outside_month() -> None:
     cross = evaluate_cross_field(df, JAN_FILE)
     assert cross["pickup_outside_file_month"]["invalid"] == 1
     assert cross["dropoff_before_pickup"]["invalid"] == 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(pytest.main([__file__]))

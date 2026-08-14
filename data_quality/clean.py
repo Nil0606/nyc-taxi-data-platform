@@ -7,6 +7,7 @@ from pathlib import Path
 
 import pandas as pd
 
+from data_quality import DEFAULT_CLEANED, DEFAULT_TRIPS
 from data_quality.profile import (
     _above_max,
     _below_min,
@@ -117,12 +118,12 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Clean TLC trip data using quality rules.")
     parser.add_argument(
         "--path",
-        default="data/sample/yellow_tripdata_2025-01.parquet",
+        default=str(DEFAULT_TRIPS),
         help="Input CSV or Parquet.",
     )
     parser.add_argument(
         "--out",
-        default="data/sample/yellow_tripdata_2025-01.cleaned.parquet",
+        default=str(DEFAULT_CLEANED),
         help="Cleaned output path (parquet or csv).",
     )
     args = parser.parse_args()
