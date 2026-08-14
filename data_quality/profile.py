@@ -10,6 +10,7 @@ from pathlib import Path
 
 import pandas as pd
 
+from data_quality import DEFAULT_TRIPS, REPORTS_DIR, REPO_ROOT
 from data_quality.rules import (
     CLEANING_POLICY,
     CROSS_FIELD_RULES,
@@ -19,8 +20,6 @@ from data_quality.rules import (
     QUALITY_RULES,
     REVERSAL_PAYMENT_TYPES,
 )
-
-REPORTS_DIR = Path("data_quality/reports")
 
 
 def load_trips(path: Path) -> pd.DataFrame:
@@ -169,12 +168,16 @@ def format_report(
     cross: dict[str, dict],
     money_breakdown: pd.DataFrame | None,
 ) -> str:
+    try:
+        display_path = path.resolve().relative_to(REPO_ROOT)
+    except ValueError:
+        display_path = path
     n = len(df)
     lines = [
         "DATA QUALITY REPORT",
         "===================",
         "",
-        f"File: {path}",
+        f"File: {display_path}",
         f"Generated: {datetime.now().isoformat(timespec='seconds')}",
         "",
         f"Total records: {n:,}",
@@ -270,7 +273,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Profile TLC trip data against quality rules.")
     parser.add_argument(
         "--path",
-        default="data/sample/yellow_tripdata_2025-01.parquet",
+        default=str(DEFAULT_TRIPS),
         help="CSV or Parquet trip file.",
     )
     parser.add_argument("--report", help="Optional report output path.")

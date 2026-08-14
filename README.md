@@ -29,6 +29,7 @@ Batch and streaming data platform for NYC Taxi & Limousine Commission (TLC) trip
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
+pip install -e .
 ```
 
 Place a small sample file under `data/sample/` for development. Do not commit large trip files.
