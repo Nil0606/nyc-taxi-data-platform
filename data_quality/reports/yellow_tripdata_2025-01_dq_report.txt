@@ -1,0 +1,104 @@
+DATA QUALITY REPORT
+===================
+
+File: data/sample/yellow_tripdata_2025-01.parquet
+Generated: 2026-08-14T18:06:54
+
+Total records: 3,475,226
+
+trip_distance
+    Invalid: 91,055
+    Valid:   3,384,171
+      below min: 90,893  -> remove
+      above max: 162  -> flag
+      nulls: keep_null
+
+passenger_count
+    Invalid: 24,656
+    Valid:   2,910,421
+    Missing: 540,149
+      below min: 24,656  -> set_null
+      nulls: keep_null
+
+fare_amount
+    Invalid: 144,173
+    Valid:   3,331,053
+      below min: 144,118  -> flag
+      above max: 55  -> flag
+      nulls: keep_null
+
+total_amount
+    Invalid: 63,116
+    Valid:   3,412,110
+      below min: 63,037  -> flag
+      above max: 79  -> flag
+      nulls: keep_null
+
+RatecodeID
+    Invalid: 0
+    Valid:   2,935,077
+    Missing: 540,149
+      nulls: keep_null
+
+store_and_fwd_flag
+    Invalid: 0
+    Valid:   2,935,077
+    Missing: 540,149
+      nulls: keep_null
+
+Airport_fee
+    Invalid: 0
+    Valid:   2,935,077
+    Missing: 540,149
+      nulls: keep_null
+
+congestion_surcharge
+    Invalid: 0
+    Valid:   2,935,077
+    Missing: 540,149
+      nulls: keep_null
+
+pickup/dropoff
+    Invalid: 124
+    Valid:   3,475,102
+    Action:  remove
+
+pickup_outside_file_month
+    Invalid: 22
+    Valid:   3,475,204
+    Expected month: 2025-01
+    Pickup min/max: 2024-12-31 20:47:55 / 2025-02-01 00:00:44
+    Action:  flag
+
+exact_duplicate_rows
+    Invalid: 0
+    Valid:   3,475,226
+    Action:  remove
+
+CLEANING POLICY
+---------------
+trip_distance <= 0               Remove
+trip_distance > 100 miles        Flag (investigate outlier)
+fare_amount < 0                  Flag; keep row (possible reversal)
+total_amount < 0                 Flag; keep row (possible reversal)
+fare/total > 500                 Flag (investigate outlier)
+passenger_count <= 0             Set to NULL
+passenger_count > 9              Set to NULL
+dropoff < pickup                 Remove
+Missing passenger_count          Keep as NULL
+Missing Airport_fee              Keep as NULL
+Missing RatecodeID               Keep as NULL
+Missing store_and_fwd_flag       Keep as NULL
+Missing congestion_surcharge     Keep as NULL
+Duplicate rows                   Remove if found
+Pickup outside file month        Flag (keep row)
+
+NEGATIVE MONEY INVESTIGATION
+----------------------------
+Negative fare/total amounts are flagged, not removed. TLC payment_type 3=No charge, 4=Dispute, 6=Voided trip.
+ payment_type  rows              meaning
+            0 84822 not_a_known_reversal
+            4 37411              dispute
+            2 14111 not_a_known_reversal
+            3  8080            no_charge
+            1    15 not_a_known_reversal
