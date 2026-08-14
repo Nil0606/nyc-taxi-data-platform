@@ -58,6 +58,11 @@ def print_stats(stats: dict) -> None:
     print("\nFlagged (kept):")
     for name, count in stats["flagged"].items():
         print(f"  {name}: {count:,}")
+    if stats.get("duplicate_elapsed_seconds") is not None:
+        print(
+            f"\nDuplicate drop: {stats['removed'].get('exact_duplicate_rows', 0):,} rows "
+            f"in {stats['duplicate_elapsed_seconds']}s"
+        )
     if stats.get("output_path"):
         print(f"\nWrote {stats['output_path']}")
 

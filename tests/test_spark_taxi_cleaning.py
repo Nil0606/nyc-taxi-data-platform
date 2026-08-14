@@ -1,21 +1,16 @@
 # pylint: disable=redefined-outer-name
-from collections.abc import Iterator
 from pathlib import Path
 
 import pytest
 from pyspark.sql import SparkSession
 
-from spark.session import get_spark_session
-from spark.transformations.taxi_cleaning import apply_cleaning_rules, validate_schema
+from spark.transformations.taxi_cleaning import (
+    apply_cleaning_rules,
+    drop_exact_duplicates,
+    validate_schema,
+)
 
 JAN_FILE = Path("data/sample/yellow_tripdata_2025-01.parquet")
-
-
-@pytest.fixture(scope="module")
-def spark_session() -> Iterator[SparkSession]:
-    session = get_spark_session("test_clean_taxi", master="local[1]")
-    yield session
-    session.stop()
 
 
 def _sample(session: SparkSession):
@@ -73,3 +68,25 @@ def test_outside_month_flagged(spark_session: SparkSession) -> None:
     assert stats["flagged"]["pickup_outside_file_month"] == 1
     flagged = cleaned.filter(cleaned.dq_flags.contains("pickup_outside_file_month"))
     assert flagged.count() == 1
+
+
+def test_drop_exact_duplicates_keeps_one_copy(spark_session: SparkSession) -> None:
+    row = (1.5, 1, 12.5, 15.0, 1, "2025-01-01 10:00:00", "2025-01-01 10:20:00", 1)
+    df = spark_session.createDataFrame(
+        [row, row],
+        schema=[
+            "trip_distance",
+            "passenger_count",
+            "fare_amount",
+            "total_amount",
+            "RatecodeID",
+            "tpep_pickup_datetime",
+            "tpep_dropoff_datetime",
+            "payment_type",
+        ],
+    )
+    deduped, stats = drop_exact_duplicates(df)
+    assert stats["input_rows"] == 2
+    assert stats["removed"] == 1
+    assert deduped.count() == 1
+
